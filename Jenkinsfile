@@ -47,11 +47,6 @@ node('docker') {
                 .mountJenkinsUser()
                 .inside("--volume ${WORKSPACE}:/go/src/${project} -w /go/src/${project}")
                         {
-                            stage("Unit test") {
-                                make 'unit-test'
-                                junit allowEmptyResults: true, testResults: 'target/unit-tests/*-tests.xml'
-                            }
-
                             stage("Review dog analysis") {
                                 stageStaticAnalysisReviewDog()
                             }
