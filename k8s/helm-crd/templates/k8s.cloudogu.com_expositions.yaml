@@ -1,0 +1,302 @@
+---
+apiVersion: apiextensions.k8s.io/v1
+kind: CustomResourceDefinition
+metadata:
+  annotations:
+    controller-gen.kubebuilder.io/version: v0.20.1
+  name: expositions.k8s.cloudogu.com
+  labels:
+    app: ces
+    app.kubernetes.io/name: k8s-exposition-lib
+spec:
+  group: k8s.cloudogu.com
+  names:
+    kind: Exposition
+    listKind: ExpositionList
+    plural: expositions
+    shortNames:
+      - exp
+    singular: exposition
+  scope: Namespaced
+  versions:
+    - additionalPrinterColumns:
+        - description: Whether the exposition is ready
+          jsonPath: .status.conditions[?(@.type == 'Ready')].status
+          name: Ready
+          type: string
+        - description: Allocated external ports
+          jsonPath: .status.allocatedPorts
+          name: External-Ports
+          type: string
+        - description: The age of the resource
+          jsonPath: .metadata.creationTimestamp
+          name: Age
+          type: date
+      name: v1
+      schema:
+        openAPIV3Schema:
+          description: Exposition is the Schema for the expositions API.
+          properties:
+            apiVersion:
+              description: |-
+                APIVersion defines the versioned schema of this representation of an object.
+                Servers should convert recognized schemas to the latest internal value, and
+                may reject unrecognized values.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#resources
+              type: string
+            kind:
+              description: |-
+                Kind is a string value representing the REST resource this object represents.
+                Servers may infer this from the endpoint the client submits requests to.
+                Cannot be updated.
+                In CamelCase.
+                More info: https://git.k8s.io/community/contributors/devel/sig-architecture/api-conventions.md#types-kinds
+              type: string
+            metadata:
+              type: object
+            spec:
+              description: spec defines the desired state of Exposition.
+              properties:
+                http:
+                  description: HTTP defines the HTTP interfaces (Layer 7) for this exposition.
+                  items:
+                    description: HTTPEntry defines an HTTP interface (Layer 7) for the exposition.
+                    properties:
+                      name:
+                        description: Name is a unique identifier for this HTTP route.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                        type: string
+                      path:
+                        description: Path is the URL path under which the application should be reachable.
+                        minLength: 1
+                        pattern: ^/.*$
+                        type: string
+                      port:
+                        description: Port is the port of the referenced Kubernetes Service.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      rewrite:
+                        description: Rewrite defines optional rewrite rules for this route.
+                        properties:
+                          regex:
+                            description: Regex defines a complex rewrite using a regular expression (e.g. Traefik ReplacePathRegex).
+                            properties:
+                              pattern:
+                                description: Pattern is the regular expression pattern to match against the request path.
+                                minLength: 1
+                                type: string
+                              replacement:
+                                description: Replacement is the replacement string, which may include capture group references (e.g. $1).
+                                type: string
+                            required:
+                              - pattern
+                              - replacement
+                            type: object
+                          stripPrefix:
+                            description: StripPrefix removes the specified prefix from the request path (e.g. Traefik StripPrefix).
+                            type: string
+                        type: object
+                      service:
+                        description: Service is the name of the Kubernetes Service to route traffic to.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?([.][a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                        type: string
+                    required:
+                      - name
+                      - path
+                      - port
+                      - service
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
+                tcp:
+                  description: TCP defines the TCP interfaces (Layer 4) for this exposition.
+                  items:
+                    description: TCPEntry defines a TCP interface (Layer 4) for the exposition.
+                    properties:
+                      name:
+                        description: Name is a unique identifier for this TCP route.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                        type: string
+                      port:
+                        description: Port is the port of the referenced Kubernetes Service.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      protocol:
+                        description: Protocol is a protocol hint (e.g. "ssh") for documentation or firewall rules.
+                        minLength: 1
+                        type: string
+                      requestedExternalPort:
+                        description: |-
+                          RequestedExternalPort is the desired external port. In Multi-CES environments,
+                          this may be overridden or dynamically assigned by the operator.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      service:
+                        description: Service is the name of the Kubernetes Service to route traffic to.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?([.][a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                        type: string
+                    required:
+                      - name
+                      - port
+                      - service
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
+                udp:
+                  description: UDP defines the UDP interfaces (Layer 4) for this exposition.
+                  items:
+                    description: UDPEntry defines a UDP interface (Layer 4) for the exposition.
+                    properties:
+                      name:
+                        description: Name is a unique identifier for this UDP route.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                        type: string
+                      port:
+                        description: Port is the port of the referenced Kubernetes Service.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      protocol:
+                        description: Protocol is a protocol hint for documentation or firewall rules.
+                        minLength: 1
+                        type: string
+                      requestedExternalPort:
+                        description: |-
+                          RequestedExternalPort is the desired external port. In Multi-CES environments,
+                          this may be overridden or dynamically assigned by the operator.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      service:
+                        description: Service is the name of the Kubernetes Service to route traffic to.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?([.][a-z0-9]([-a-z0-9]*[a-z0-9])?)*$
+                        type: string
+                    required:
+                      - name
+                      - port
+                      - service
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
+              type: object
+            status:
+              description: status defines the observed state of Exposition.
+              properties:
+                allocatedPorts:
+                  description: AllocatedPorts contains the actually assigned external ports for TCP and UDP entries.
+                  items:
+                    description: AllocatedPort represents an actually assigned external port for a TCP or UDP entry.
+                    properties:
+                      externalPort:
+                        description: ExternalPort is the actually assigned external port.
+                        format: int32
+                        maximum: 65535
+                        minimum: 1
+                        type: integer
+                      name:
+                        description: Name matches the name of the corresponding TCP or UDP entry.
+                        maxLength: 253
+                        minLength: 1
+                        pattern: ^[a-z0-9]([-a-z0-9]*[a-z0-9])?$
+                        type: string
+                    required:
+                      - externalPort
+                      - name
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - name
+                  x-kubernetes-list-type: map
+                conditions:
+                  description: Conditions represent the current state of the Exposition resource.
+                  items:
+                    description: Condition contains details for one aspect of the current state of this API Resource.
+                    properties:
+                      lastTransitionTime:
+                        description: |-
+                          lastTransitionTime is the last time the condition transitioned from one status to another.
+                          This should be when the underlying condition changed.  If that is not known, then using the time when the API field changed is acceptable.
+                        format: date-time
+                        type: string
+                      message:
+                        description: |-
+                          message is a human readable message indicating details about the transition.
+                          This may be an empty string.
+                        maxLength: 32768
+                        type: string
+                      observedGeneration:
+                        description: |-
+                          observedGeneration represents the .metadata.generation that the condition was set based upon.
+                          For instance, if .metadata.generation is currently 12, but the .status.conditions[x].observedGeneration is 9, the condition is out of date
+                          with respect to the current state of the instance.
+                        format: int64
+                        minimum: 0
+                        type: integer
+                      reason:
+                        description: |-
+                          reason contains a programmatic identifier indicating the reason for the condition's last transition.
+                          Producers of specific condition types may define expected values and meanings for this field,
+                          and whether the values are considered a guaranteed API.
+                          The value should be a CamelCase string.
+                          This field may not be empty.
+                        maxLength: 1024
+                        minLength: 1
+                        pattern: ^[A-Za-z]([A-Za-z0-9_,:]*[A-Za-z0-9_])?$
+                        type: string
+                      status:
+                        description: status of the condition, one of True, False, Unknown.
+                        enum:
+                          - "True"
+                          - "False"
+                          - Unknown
+                        type: string
+                      type:
+                        description: type of condition in CamelCase or in foo.example.com/CamelCase.
+                        maxLength: 316
+                        pattern: ^([a-z0-9]([-a-z0-9]*[a-z0-9])?(\.[a-z0-9]([-a-z0-9]*[a-z0-9])?)*/)?(([A-Za-z0-9][-A-Za-z0-9_.]*)?[A-Za-z0-9])$
+                        type: string
+                    required:
+                      - lastTransitionTime
+                      - message
+                      - reason
+                      - status
+                      - type
+                    type: object
+                  type: array
+                  x-kubernetes-list-map-keys:
+                    - type
+                  x-kubernetes-list-type: map
+              type: object
+          required:
+            - spec
+          type: object
+      served: true
+      storage: true
+      subresources:
+        status: {}
