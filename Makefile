@@ -2,7 +2,7 @@
 PROJECT_NAME=k8s-exposition-lib
 ARTIFACT_ID=k8s-exposition-crd
 APPEND_CRD_SUFFIX=false
-VERSION=1.0.0
+VERSION=0.0.1
 
 MAKEFILES_VERSION=10.8.0
 
