@@ -211,8 +211,10 @@ type ExpositionStatus struct {
 // +kubebuilder:object:root=true
 // +kubebuilder:resource:shortName=exp
 // +kubebuilder:subresource:status
-// +kubebuilder:printcolumn:name="Ready",type="string",JSONPath=".status.conditions[?(@.type == 'Ready')].status",description="Whether the exposition is ready"
-// +kubebuilder:printcolumn:name="External-Ports",type="string",JSONPath=".status.allocatedPorts",description="Allocated external ports",priority=0
+// +kubebuilder:printcolumn:name="Valid",type="string",JSONPath=".status.conditions[?(@.type == 'Valid')].status",description="Whether the exposition is valid"
+// +kubebuilder:printcolumn:name="IngressesReady",type="string",JSONPath=".status.conditions[?(@.type == 'IngressesReady')].status",description="Whether the ingresses are ready"
+// +kubebuilder:printcolumn:name="HTTP-Paths",type="string",JSONPath=".spec.http[*].path",description="Configured HTTP paths"
+// +kubebuilder:printcolumn:name="External-Ports",type="string",JSONPath=".status.allocatedPorts[*].externalPort",description="Allocated external TCP/UDP ports"
 // +kubebuilder:printcolumn:name="Age",type="date",JSONPath=".metadata.creationTimestamp",description="The age of the resource"
 
 // Exposition is the Schema for the expositions API.
