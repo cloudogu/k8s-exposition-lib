@@ -20,12 +20,20 @@ spec:
   scope: Namespaced
   versions:
     - additionalPrinterColumns:
-        - description: Whether the exposition is ready
-          jsonPath: .status.conditions[?(@.type == 'Ready')].status
-          name: Ready
+        - description: Whether the exposition is valid
+          jsonPath: .status.conditions[?(@.type == 'Valid')].status
+          name: Valid
           type: string
-        - description: Allocated external ports
-          jsonPath: .status.allocatedPorts
+        - description: Whether the ingresses are ready
+          jsonPath: .status.conditions[?(@.type == 'IngressesReady')].status
+          name: IngressesReady
+          type: string
+        - description: Configured HTTP paths
+          jsonPath: .spec.http[*].path
+          name: HTTP-Paths
+          type: string
+        - description: Allocated external TCP/UDP ports
+          jsonPath: .status.allocatedPorts[*].externalPort
           name: External-Ports
           type: string
         - description: The age of the resource
