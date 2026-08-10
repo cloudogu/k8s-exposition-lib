@@ -11,7 +11,7 @@ Each entry in `spec.http` exposes a Kubernetes Service at a specific URL path.
 - `name` — unique identifier for this route within the Exposition (lowercase alphanumeric and hyphens, e.g. `ui`)
 - `service` — name of the Kubernetes Service to route traffic to
 - `port` — port number on the target Service
-- `path` — URL path under which the application is reachable; must start with `/`
+- `path` — URL path, that should be expose; must start with `/`
 - `rewrite.stripPrefix` *(optional)* — prefix to strip from the request path before forwarding to the Service
 - `rewrite.regex.pattern` *(optional)* — regular expression to match against the request path
 - `rewrite.regex.replacement` *(optional)* — replacement string for the matched pattern (capture groups via `$1`, `$2`, …); required when `pattern` is set

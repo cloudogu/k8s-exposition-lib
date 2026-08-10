@@ -11,10 +11,10 @@ Jeder Eintrag in `spec.http` macht einen Kubernetes-Service unter einem bestimmt
 - `name` — eindeutiger Bezeichner dieser Route innerhalb der Exposition (Kleinbuchstaben, Ziffern und Bindestriche, z. B. `ui`)
 - `service` — Name des Kubernetes-Services, an den der Traffic weitergeleitet wird
 - `port` — Port-Nummer am Ziel-Service
-- `path` — URL-Pfad, unter dem die Anwendung erreichbar ist; muss mit `/` beginnen
+- `path` — URL-Pfad, der von außen erreichbar gemacht werden soll; muss mit `/` beginnen
 - `rewrite.stripPrefix` *(optional)* — Präfix, der vor der Weiterleitung an den Service vom Anfragepfad entfernt wird
 - `rewrite.regex.pattern` *(optional)* — Regulärer Ausdruck, der auf den Anfragepfad angewendet wird
-- `rewrite.regex.replacement` *(optional)* — Ersetzungszeichenkette für den gefundenen Treffer (Capture-Gruppen über `$1`, `$2`, …); erforderlich, wenn `pattern` gesetzt ist
+- `rewrite.regex.replacement` *(optional)* — Ersatz für den im `pattern` gefundenen Treffer (Capture-Gruppen über `$1`, `$2`, …); erforderlich, wenn `pattern` gesetzt ist
 
 Pro Route sollte nur eines von `stripPrefix` oder `regex` gesetzt werden.
 
@@ -37,7 +37,7 @@ Jeder Eintrag in `spec.tcp` macht einen Kubernetes-Service über einen rohen TCP
 Nach der Reconciliation aktualisiert der Operator `status.conditions`:
 
 - `Valid` — ob die Exposition-Spezifikation akzeptiert und erfolgreich verarbeitet wurde
-- `IngressesReady` — ob die HTTP-Ingress-Objekte erstellt wurden; der Reason spiegelt den aktuellen Zustand wider (`Created`, `DoguStopped`, `DoguStarting`, `MaintenanceMode`)
+- `IngressesReady` — ob die HTTP-Ingress-Objekte erstellt wurden; der `Reason` spiegelt den aktuellen Zustand wider (`Created`, `DoguStopped`, `DoguStarting`, `MaintenanceMode`)
 - `IngressTCPRoutesCreated` — ob die TCP-IngressRoute-Objekte erstellt wurden
 - `IngressUDPRoutesCreated` — ob die UDP-IngressRoute-Objekte erstellt wurden
 - `LoadBalancerPortsAllocated` — ob alle angeforderten TCP/UDP-Ports am LoadBalancer erfolgreich zugewiesen wurden
