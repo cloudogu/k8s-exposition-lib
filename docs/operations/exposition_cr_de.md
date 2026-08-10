@@ -82,8 +82,10 @@ spec:
     - name: ui
       service: myapp
       port: 8080
+      # Unter dieser URL ist die App von außen erreichbar, https://<fqdn>/myapp/dashboard
       path: /myapp
       rewrite:
+        # Entfernt /myapp aus der URL – wird intern als /dashboard an den Service (myapp:8080) weitergeleitet.
         stripPrefix: /myapp
 ```
 
